@@ -10,34 +10,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/components/ui/use-toast";
-import { App_Name } from "@/constants";
 
-import { logoutUser } from "@/services/actions/logoutUser";
-import { getUserInfo } from "@/services/authServics";
+import { App_Name } from "@/constants";
+import { logout, useCurrentUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hokks";
+
 import { ChevronDown } from "lucide-react";
 
 
-import { useRouter } from "next/navigation";
+
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AuthDropdown = () => {
-  const { toast } = useToast();
-  const user = getUserInfo();
 
-  const router = useRouter();
+  const user = useAppSelector(useCurrentUser);
+  const dispatch=useAppDispatch()
+ 
+
+
   const handleLogout = () => {
-    logoutUser(router);
-    toast({ title: "Logout", description: "User logged out successfully" });
+    dispatch(logout());
+    toast.success("Logout successfully");
   };
 
   return (
     <>
-      {user && user.userId ? (
+      {user && user.role ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
-              <MyAvatar url={user.profilePhoto} alt="User Avatar" />
+              <MyAvatar url={user.email} alt="User Avatar" />
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>
